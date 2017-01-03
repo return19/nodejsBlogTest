@@ -1,0 +1,49 @@
+body {
+  font-family: "Helvetica Neue", "Lucida Grande", "Arial";
+  font-size: 13px;
+  text-stroke: 1px rgba(255,255,255,0.1);
+  color: #555;
+}
+h1,
+h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #343434;
+}
+h1 {
+  text-shadow: 1px 2px 2px #ddd;
+  font-size: 60px;
+}
+.title {
+  margin: 50px;
+  margin-left: 15%;
+  width: 50%;
+}
+.article {
+  margin: 20px;
+  margin-left: 15%;
+}
+.article .body {
+  font-size: 15px;
+  width: 50%;
+  text-align: justify;
+}
+.article .comments h3 {
+  text-align: left;
+}
+.article .comments .comment {
+  margin: 10px;
+}
+.article .comments .comment .comment_person {
+  font-size: 14px;
+  color: #f00;
+  margin-left: 10px;
+}
+.article .comments .comment .comment_content {
+  font-size: 12px;
+  margin-left: 20px;
+}
+.article .comments .comment .comment_delete_buttons {
+  font-size: 18px;
+  margin: 10px;
+}
