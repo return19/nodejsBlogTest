@@ -4,13 +4,71 @@ var Server = require('mongodb').Server;
 var BSON = require('mongodb').BSON;
 var ObjectID = require('mongodb').ObjectID;
 
-ArticleProvider = function(host,port){
-	this.db = new Db('node-mongo-blog', new Server(host,port,{auto_reconnect: true},{}));
-	this.db.open(function(){});
+// OpenShift vars
+var mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || "mongodb://localhost:27017",
+    mongoURLLabel = "";
+
+if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
+  var mongoServiceName = process.env.DATABASE_SERVICE_NAME.toUpperCase(),
+      mongoHost = process.env[mongoServiceName + '_SERVICE_HOST'],
+      mongoPort = process.env[mongoServiceName + '_SERVICE_PORT'],
+      mongoDatabase = process.env[mongoServiceName + '_DATABASE'],
+      mongoPassword = process.env[mongoServiceName + '_PASSWORD']
+      mongoUser = process.env[mongoServiceName + '_USER'];
+
+  if (mongoHost && mongoPort && mongoDatabase) {
+    mongoURLLabel = mongoURL = 'mongodb://';
+    if (mongoUser && mongoPassword) {
+      mongoURL += mongoUser + ':' + mongoPassword + '@';
+    }
+    // Provide UI label that excludes user id and pw
+    mongoURLLabel += mongoHost + ':' + mongoPort + '/' + mongoDatabase;
+    mongoURL += mongoHost + ':' +  mongoPort + '/' + mongoDatabase;
+
+  }
+}
+var db = null,
+    dbDetails = new Object();
+
+var initDb = function(callback) {
+	console.log("initializing db");
+  if (mongoURL == null) return;
+  	console.log("mongoUrl not null :" + mongoURL);
+  var mongodb = require('mongodb');
+  if (mongodb == null) return;
+
+  	console.log("mongodb not null");
+
+  mongodb.connect(mongoURL, function(err, conn) {
+    	console.log("connecting db");
+    if (err) {
+    	console.log("error  connecting db");
+      callback(err);
+      return;
+    }
+
+    db = conn;
+    dbDetails.databaseName = db.databaseName;
+    dbDetails.url = mongoURLLabel;
+    dbDetails.type = 'MongoDB';
+
+    console.log('Connected to MongoDB at: %s', mongoURL);
+  	callback(null);
+  });
+};
+
+ArticleProvider = function(){
+	// this.db = new Db('node-mongo-blog', new Server(host,port,{auto_reconnect: true},{}));
+	if (!db) {
+    	initDb(function(err){
+  			console.log(db);
+    	});
+  	}
+	// this.db.open(function(){});
 }
 
 ArticleProvider.prototype.getCollection = function(callback){
-	this.db.collection('articles',function(err,article_collection){
+	db.collection('articles',function(err,article_collection){
 		if(err)	callback(err);
 		else callback(null,article_collection);
 	});

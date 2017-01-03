@@ -10,6 +10,10 @@ var users = require('./routes/users');
 
 var app = express();
 
+// Openshift vars
+var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
+    ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -56,6 +60,7 @@ app.use(function(err, req, res, next) {
     });
 });
 
-app.listen(3000);
+app.listen(port,ip);
+console.log('Server running on http://%s:%s', ip, port);
 
 module.exports = app;

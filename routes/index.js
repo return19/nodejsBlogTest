@@ -6,7 +6,7 @@ var articleProvider = require('../articleProvider');
 // router.get('/', function(req, res) {
 //   res.render('index', { title: 'Express' });
 // });
-var ap = new articleProvider.ArticleProvider('localhost',27017);
+var ap = new articleProvider.ArticleProvider();
 router.get('/', function(req,res){
     
     ap.findAll(function(err,articles){
